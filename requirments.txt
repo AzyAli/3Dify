@@ -16,3 +16,4 @@ ipywidgets>=7.6.0
 pydantic>=1.8.0
 tqdm>=4.62.0
 pillow>=8.3.0
+gradio_client>=0.2.7

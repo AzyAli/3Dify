@@ -2,17 +2,18 @@
 This module provides the main processing pipeline for converting geospatial data to 3D models.
 """
 import os
+import shutil
 import logging
 from typing import Dict, List, Union, Optional, Any
 from pathlib import Path
 import numpy as np
 
 from threedify.core.config import Config
-from threedify.data.loaders.import get_loader
-from threedify.models import get_model
-from threedify.processing import get_processor
+from threedify.data.loaders import get_loader
+from threedify.models.utils import get_model
+from threedify.processing.utils import get_processor
 from threedify.export import get_exporter
-from threedify.visualization import get_visualizer
+from threedify.visualization.utils import get_visualizer
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class Pipeline:
         self._processor = None
         self._exporter = None
         self._visualizer = None
+        self.data_path = None
         self.results = {} # Store results heeere
         if self.verbose:
             logger.info("Pipeline initialized with configuration: %s", self.config)
@@ -57,6 +59,7 @@ class Pipeline:
         Returns:
             self: Pipeline instance for method chaining
         """
+        self.data_path = Path(data_path)
         if data_type is None:
             data_type = self._infer_data_type(data_path)
             logger.info("Inferred data type: %s", data_type)
@@ -102,8 +105,8 @@ class Pipeline:
         self._model = get_model(model_type)
         if self.verbose:
             logger.info("Generating 3d model using %s", model_type)
-        self.model_data = self._model.generate(self.processed_data, **kwargs)
-        self.results['model_data'] = self.model_data
+        self.model_data_path, self.download_path = self._model.generate(self.data_path, **kwargs)
+        self.results['model_data_path'] = self.model_data_path
         if self.verbose:
             logger.info("3D model generated successfully")
         return self
@@ -117,14 +120,15 @@ class Pipeline:
         Returns:
             self: Pipeline instance for method chaining
         """
-        if not hasattr(self, 'model_data'):
+        if not self.model_data_path:
             raise ValueError("No model data available. Please call generate_model() first.")
         output_path = Path(output_path)
         os.makedirs(output_path.parent, exist_ok=True)
         self._exporter = get_exporter(format_type)
         if self.verbose:
             logger.info("Exporting model to %s format at %s", format_type, output_path)
-        exporter_path = self._exporter.export(self.model_data, output_path, **kwargs)
+        # exporter_path = self._exporter.export(self.model_data, output_path, **kwargs)
+        exporter_path = shutil.copy(self.model_data_path, output_path)
         self.results['exporter_path'] = exporter_path
         if self.verbose:
             logger.info("Model exported successfully to %s", exporter_path)

@@ -4,8 +4,8 @@ into 3D models for flood risk analysis and digital twin applications.(or at leas
 """
 __version__ = "0.1.0"
 
-from threedify.core.pipeline import Pipline
-from threedify.visualization.jupyter import init_notbook
+from threedify.core.pipeline import Pipeline
+from threedify.visualization.jupyter import init_notebook
 
 def create_pipeline(config=None, verbose=True):
     """Create a new processing pipeline with optional configuration.
