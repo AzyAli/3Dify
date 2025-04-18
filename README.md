@@ -1,4 +1,4 @@
-# 3Dify: Spatial data tO 3D model generation for flood risk management
+# 3Dify: Spatial data to 3D model generation for flood risk management
 
 3Dify is a comprehensive Python library for processing geospatial data (LiDAR, satellite images) into 3D models for flood risk analysis and digital twin applications.
 
