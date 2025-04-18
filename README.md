@@ -15,4 +15,4 @@
 ## Installation
 
 ```bash
-pip install 3Dify
+pip install threedify
